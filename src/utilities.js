@@ -3,50 +3,57 @@
  * of a product) holds, such as its price, energy and other similar properties.
  */
 class EntryData {
-	#energy;
-	#price;
-
 	/**
-	 * @param {object} data The task data itself.
+	 * @param data The task data itself.
 	 */
 	constructor(data = {}) {
-		this.#energy = data.energy || 0;
-		this.#price  = data.price  || 0;
+		this._energy = data.energy || 0;
+		this._price  = data.price  || 0;
 	}
 
 	/**
 	 * @return {number} The energy, in calories.
 	 */
 	get energy() {
-		return this.#energy;
+		return this._energy;
 	}
 
 	/**
 	 * @return {number} The price, in tugriks.
 	 */
 	get price() {
-		return this.#price;
+		return this._price;
 	}
 }
 
 /**
- * Represents entry data that can be edited, thus is dynamic.
+ * Represents entry data that can be edited, thus making it dynamic.
  */
 class DynamicEntryData extends EntryData {
 	/**
 	 * Adds the given entry data to the current properties.
 	 * @param {EntryData} entryData The data to add.
+	 * @return {DynamicEntryData} The current instance (chaining).
 	 */
 	add(entryData) {
-		// TODO: Implement this.
+		for (const key of Object.keys(this)) {
+			this[key] += entryData[key];
+		}
+
+		return this;
 	}
 
 	/**
 	 * Adds the given entry data from the current properties.
 	 * @param {EntryData} entryData The data to remove.
+	 * @return {DynamicEntryData} The current instance (chaining).
 	 */
 	remove(entryData) {
-		// TODO: Implement this.
+		for (const key of Object.keys(this)) {
+			this[key] -= entryData[key];
+		}
+
+		return this;
 	}
 }
 
