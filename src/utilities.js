@@ -11,7 +11,7 @@ class EntryData {
 	 */
 	constructor(data = {}) {
 		this.#energy = data.energy || 0;
-		this.#price = data.price || 0;
+		this.#price  = data.price  || 0;
 	}
 
 	/**
@@ -34,17 +34,19 @@ class EntryData {
  */
 class DynamicEntryData extends EntryData {
 	/**
-	 * @param {number} energy The energy, in calories.
+	 * Adds the given entry data to the current properties.
+	 * @param {EntryData} entryData The data to add.
 	 */
-	set energy(energy) {
-		his.#energy = energy;
+	add(entryData) {
+		// TODO: Implement this.
 	}
 
 	/**
-	 * @param {number} price The price, in tugriks.
+	 * Adds the given entry data from the current properties.
+	 * @param {EntryData} entryData The data to remove.
 	 */
-	set price(price) {
-		this.#price = price;
+	remove(entryData) {
+		// TODO: Implement this.
 	}
 }
 
@@ -59,12 +61,12 @@ class Product {
  * Represents a hamburger, nothing more to explain here.
  */
 class Burger extends Product {
-	static #big = new EntryData({ energy: 40, price: 100 });
-	static #small = new EntryData({ energy: 20, price: 50 });
+	static #big   = new EntryData({ energy: 40, price: 100 });
+	static #small = new EntryData({ energy: 20, price:  50 });
 
 	static #withCheese = new EntryData({ energy: 20, price: 10 });
 	static #withPotato = new EntryData({ energy: 10, price: 15 });
-	static #withSalad = new EntryData({ energy: 5, price: 20 });
+	static #withSalad  = new EntryData({ energy:  5, price: 20 });
 }
 
 /**
@@ -72,13 +74,13 @@ class Burger extends Product {
  */
 class Drink extends Product {
 	static #coffee = new EntryData({ energy: 20, price: 80 });
-	static #cola = new EntryData({ energy: 40, price: 50 });
+	static #cola   = new EntryData({ energy: 40, price: 50 });
 }
 
 /**
  * Represents a salad, such as a Caesar or Olivier salad.
  */
 class Salad extends Product {
-	static #caesar = new EntryData({ energy: 20, price: 100 });
-	static #olivier = new EntryData({ energy: 80, price: 50 });
+	static #caesar  = new EntryData({ energy: 20, price: 100 });
+	static #olivier = new EntryData({ energy: 80, price:  50 });
 }
