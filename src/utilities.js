@@ -25,3 +25,21 @@ class ProductData {
 		return this.#price;
 	}
 }
+
+/**
+ * Represents a hamburger, nothing more to explain here.
+ */
+class Burger {
+}
+
+/**
+ * Represents a drink, such as a cup of coffee or a glass of cola.
+ */
+class Drink {
+}
+
+/**
+ * Represents a salad, such as a Caesar or Olivier salad.
+ */
+class Salad {
+}
