@@ -1,8 +1,8 @@
 /**
- * Represents common data that a single product holds, such
- * as its price, energy and other similar characteristics.
+ * Represents common data that a single entry (either a product or a component
+ * of a product) holds, such as its price, energy and other similar properties.
  */
-class ProductData {
+class EntryData {
 	#energy;
 	#price;
 
