@@ -9,7 +9,7 @@ class EntryData {
 	/**
 	 * @param {object} data The task data itself.
 	 */
-	constructor(data) {
+	constructor(data = {}) {
 		this.#energy = data.energy || 0;
 		this.#price = data.price || 0;
 	}
@@ -49,9 +49,16 @@ class DynamicEntryData extends EntryData {
 }
 
 /**
+ * Represents a single sold food product.
+ */
+class Product {
+	#total = new DynamicEntryData();
+}
+
+/**
  * Represents a hamburger, nothing more to explain here.
  */
-class Burger {
+class Burger extends Product {
 	static #big = new EntryData({ energy: 40, price: 100 });
 	static #small = new EntryData({ energy: 20, price: 50 });
 
@@ -63,7 +70,7 @@ class Burger {
 /**
  * Represents a drink, such as a cup of coffee or a glass of cola.
  */
-class Drink {
+class Drink extends Product {
 	static #coffee = new EntryData({ energy: 20, price: 80 });
 	static #cola = new EntryData({ energy: 40, price: 50 });
 }
@@ -71,7 +78,7 @@ class Drink {
 /**
  * Represents a salad, such as a Caesar or Olivier salad.
  */
-class Salad {
+class Salad extends Product {
 	static #caesar = new EntryData({ energy: 20, price: 100 });
 	static #olivier = new EntryData({ energy: 80, price: 50 });
 }
