@@ -1,6 +1,6 @@
 /**
  * Represents properties of an order, a product, a type of a product or a
- * component of a product. It contains such fields as a price, an energy
+ * component of a product. It contains such settings as a price, an energy
  * value, and other.
  */
 class Properties {
@@ -80,64 +80,30 @@ class Product {
 /** Represents a burger, nothing more to explain here. */
 class Burger extends Product {
     /**
-     * Either returns the properties of a burger with
-     * such filling from the object or throws an error.
-     * @param fillings All the possible fillings.
-     * @param {string} filling The given filling.
-     * @return The properties of a burger with such filling.
-     * @throws The unknown burger filling error.
-     */
-    static getFillingOrThrow(fillings, filling) {
-        if (filling in fillings) {
-            return fillings[filling];
-        }
-
-        throw new Error(`unknown burger filling: ${filling}`);
-    }
-
-    /**
-     * Either returns the properties of a burger of
-     * such size from the object or throws an error.
-     * @param sizes All the possible sizes.
-     * @param {string} size The given size.
-     * @return The properties of a burger of such size.
-     * @throws The unknown burger size error.
-     */
-    static getSizeOrThrow(sizes, size) {
-        if (size in sizes) {
-            return sizes[size];
-        }
-
-        throw new Error(`unknown burger size: ${size}`);
-    }
-
-    /**
-     * @param {string} size The size of a burger, from a set.
-     * @param {string} filling The filling for a burger.
+     * @param {string} size    The size of a burger,     from a set.
+     * @param {string} filling The filling for a burger, from a set.
      */
     constructor(size, filling) {
         super();
 
-        this._filling_ = filling;
-        this._props_.add(this.constructor.getFillingOrThrow({
+        this._props_.add({
             cheese: new Properties({ energy: 20, price: 10 }),
             potato: new Properties({ energy: 10, price: 15 }),
             salad:  new Properties({ energy:  5, price: 20 }),
-        }, filling));
+        }[this._filling_ = filling]);
 
-        this._size_ = size;
-        this._props_.add(this.constructor.getSizeOrThrow({
+        this._props_.add({
             big:   new Properties({ energy: 40, price: 100 }),
             small: new Properties({ energy: 20, price:  50 }),
-        }, size));
+        }[this._size_ = size]);
     }
 
-    /** @return {string} The filling of the burger. */
+    /** @return {string} The filling of the burger, from a set. */
     get filling() {
         return this._filling_;
     }
 
-    /** @return {string} The size of the burger. */
+    /** @return {string} The size of the burger, from a set. */
     get size() {
         return this._size_;
     }
@@ -145,34 +111,17 @@ class Burger extends Product {
 
 /** Represents a drink, such as a cup of coffee or a glass of cola. */
 class Drink extends Product {
-    /**
-     * Either returns the properties of a drink of
-     * such type from the object or throws an error.
-     * @param types All the possible types.
-     * @param {string} type The given type.
-     * @return The properties of a drink of such type.
-     * @throws The unknown drink type error.
-     */
-    static getTypeOrThrow(types, type) {
-        if (type in types) {
-            return types[type];
-        }
-
-        throw new Error(`unknown drink type: ${type}`);
-    }
-
     /** @param {string} type The type of a drink, from a set. */
     constructor(type) {
         super();
 
-        this._type_ = type;
-        this._props_.add(this.constructor.getTypeOrThrow({
+        this._props_.add({
             coffee: new Properties({ energy: 20, price: 80 }),
             cola:   new Properties({ energy: 40, price: 50 }),
-        }, type));
+        }[this._type_ = type]);
     }
 
-    /** @return {string} The type of the drink. */
+    /** @return {string} The type of the drink, from a set. */
     get type() {
         return this._type_;
     }
@@ -180,51 +129,38 @@ class Drink extends Product {
 
 /** Represents a salad, such as a Caesar salad or an Olivier salad. */
 class Salad extends Product {
-    /**
-     * Either returns the properties of a salad of
-     * such type from the object or throws an error.
-     * @param types All the possible types.
-     * @param {string} type The given type.
-     * @return The properties of a salad of such type.
-     * @throws The unknown salad type error.
-     */
-    static getTypeOrThrow(types, type) {
-        if (type in types) {
-            return types[type];
-        }
-
-        throw new Error(`unknown salad type: ${type}`);
-    }
+    /** @type {number} */
+    _weight_ = 100;
 
     /**
-     * @param {string} type The type of a salad, from a set.
+     * @param {string} type   The type of a salad, from a set.
      * @param {number} weight The weight of a salad, in grams.
      */
     constructor(type, weight) {
         super();
 
-        this._type_ = type;
-        this._props_.add(this.constructor.getTypeOrThrow({
+        this.weight = weight;
+        this._props_.add({
             caesar:  new Properties({ energy: 20, price: 100 }),
             olivier: new Properties({ energy: 80, price:  50 }),
-        }, type));
-
-        const defaultGrams = 100;
-        const multiplier = weight / defaultGrams;
-        this._props_.multiply(multiplier);
+        }[this._type_ = type]);
     }
 
-    /** @return {string} The type of the salad. */
+    /** @return {string} The type of the salad, from a set. */
     get type() {
         return this._type_;
+    }
+
+    /** @param {number} weight The weight of a salad, in grams. */
+    set weight(weight) {
+        // Do not use `_weight_` as a setter!
+        this._props_.multiply(weight / this._weight_);
+        this._weight_ = weight;
     }
 }
 
 /** Represents the order, containing the order. */
 class Order extends Product {
-    /** @type {Error} */
-    static _paidForError_ = new Error("the product is already paid for");
-
     /** @type {boolean} */
     _isPaidFor_ = false;
 
@@ -232,18 +168,30 @@ class Order extends Product {
     _products_ = new Set();
 
     /**
+     * Ensures that the order was not paid for yet.
+     * @param {Function} callback The callback.
+     * @param {...any}   args     The callback args.
+     * @return The return value of the callback.
+     */
+    _ensureNotPaid_(callback, ...args) {
+        if (this._isPaidFor_) {
+            throw new Error("the product is already paid for");
+        } else {
+            return callback(...args);
+        }
+    }
+
+    /**
      * Adds the product to the order.
      * @param {Product} product The product to add.
      * @return {Order} This instance (for chaining).
      */
     add(product) {
-        if (this._isPaidFor_) {
-            throw this.constructor._paidForError_;
-        }
-
-        this._products_.add(product);
-        this._props_.add(product.props);
-        return this;
+        return this._ensureNotPaid_(() => {
+            this._products_.add(product);
+            this._props_.add(product.props);
+            return this;
+        });
     }
 
     /**
@@ -252,21 +200,21 @@ class Order extends Product {
      * @return {Order} This instance (for chaining).
      */
     delete(product) {
-        if (this._isPaidFor_) {
-            throw this.constructor._paidForError_;
-        }
-
-        this._products_.delete(product);
-        this._props_.substract(product.props);
-        return this;
+        return this._ensureNotPaid_(() => {
+            this._products_.delete(product);
+            this._props_.substract(product.props);
+            return this;
+        });
     }
 
     /**
-     * Locks the order, making it immutable.
+     * Pays for the order and makes it immutable.
      * @return {Order} This instance (for chaining).
      */
     payFor() {
-        this._isPaidFor_ = true;
-        return this;
+        return this._ensureNotPaid_(() => {
+            this._isPaidFor_ = true;
+            return this;
+        });
     }
 }
