@@ -1,43 +1,31 @@
 /**
- * Represents common data that a single entry (either a product type or a
+ * Represents common data that a single entry (either a product, its type or a
  * component of a product) holds, such as its price, energy and other similar
  * properties.
  */
 class EntryData {
-    /**
-     * @param data The task data itself.
-     */
+    /** @param data The task data itself. */
     constructor(data = {}) {
         this._energy = data.energy || 0;
         this._price  = data.price  || 0;
     }
 
-    /**
-     * @return {number} The energy, in calories.
-     */
+    /** @return {number} The energy, in calories. */
     get energy() {
         return this._energy;
     }
 
-    /**
-     * @return {number} The price, in tugriks.
-     */
+    /** @return {number} The price, in tugriks. */
     get price() {
         return this._price;
     }
-}
 
-/**
- * Represents product data. The difference is that it can be edited, as
- * product properties can change, unlike component or type properties.
- */
-class ProductData extends EntryData {
     /**
      * Adds the given entry data to the current properties.
      * @param {EntryData} entryData The data to add.
      * @return {ProductData} The current instance (chaining).
      */
-    add(entryData) {
+     add(entryData) {
         for (const key of Object.keys(this)) {
             this[key] += entryData[key];
         }
@@ -72,159 +60,104 @@ class ProductData extends EntryData {
     }
 }
 
-/**
- * Represents a single sold food product.
- */
+/** Represents a single sold food product of any kind. */
 class Product {
-    _data = new ProductData();
-
-    /**
-     * @param types The possible product types.
-     * @param {string} type The product type.
-     */
-    constructor(types, type) {
-        if (!(type in types)) {
-            throw new Error(`Unknown product type: ${type}`);
+    static getOrFail(obj, key) {
+        if (!(key in obj)) {
+            throw new Error(`Unknown product value: ${key}.`);
         }
 
-        this._type = type;
-        this._data.add(types[type]);
+        return obj[key];
     }
 
-    /**
-     * @return {number} The energy, in calories.
-     */
+    _data = new EntryData();
+
+    /** @return {number} The energy, in calories. */
     get energy() {
         return this._data.energy;
     }
 
-    /**
-     * @return {number} The price, in tugriks.
-     */
+    /** @return {number} The price, in tugriks. */
     get price() {
         return this._data.price;
     }
+}
 
+/** Represents a burger, nothing more to explain here. */
+class Burger extends Product {
     /**
-     * @return {string} The type of the product.
+     * @param {string} size The size of a burger, from a set.
+     * @param {string} filling The filling for a burger.
      */
+    constructor(size, filling) {
+        super();
+
+        this._filling = filling;
+        this._data.add(this.constructor.getOrFail({
+            cheese: new EntryData({ energy: 20, price: 10 }),
+            potato: new EntryData({ energy: 10, price: 15 }),
+            salad:  new EntryData({ energy:  5, price: 20 }),
+        }, filling));
+
+        this._size = size;
+        this._data.add(this.constructor.getOrFail({
+            big:   new EntryData({ energy: 40, price: 100 }),
+            small: new EntryData({ energy: 20, price:  50 }),
+        }, size));
+    }
+
+    /** @return {string} The filling of the burger. */
+    get filling() {
+        return this._filling;
+    }
+
+    /** @return {string} The size of the burger. */
+    get size() {
+        return this._size;
+    }
+}
+
+/** Represents a drink, such as a cup of coffee or a glass of cola. */
+class Drink extends Product {
+    /** @param {string} type The type of a drink, from a set. */
+    constructor(type) {
+        super();
+
+        this._type = type;
+        this._data.add(this.constructor.getOrFail({
+            coffee: new EntryData({ energy: 20, price: 80 }),
+            cola:   new EntryData({ energy: 40, price: 50 }),
+        }, type));
+    }
+
+    /** @return {string} The type of the drink. */
     get type() {
         return this._type;
     }
 }
 
-/**
- * Represents a burger, nothing more to explain here.
- */
-class Burger extends Product {
-    static _withCheese = new EntryData({ energy: 20, price: 10 });
-    static _withPotato = new EntryData({ energy: 10, price: 15 });
-    static _withSalad  = new EntryData({ energy:  5, price: 20 });
-
-    /**
-     * @param {string} type The burger type.
-     */
-    constructor(type) {
-        super({
-            big:   new EntryData({ energy: 40, price: 100 }),
-            small: new EntryData({ energy: 20, price:  50 }),
-        }, type);
-    }
-
-    /**
-     * @return {string} The size of the product. In this
-     * case it is an alias for the type of the product.
-     */
-    get size() {
-        return this.type;
-    }
-
-    /**
-     * Adds cheese to the burger ingredients.
-     * @return {Burger} The current instance (chaining).
-     */
-    addCheese() {
-        this._data.add(this.constructor._withCheese);
-        return this;
-    }
-
-    /**
-     * Adds potato to the burger ingredients.
-     * @return {Burger} The current instance (chaining).
-     */
-    addPotato() {
-        this._data.add(this.constructor._withPotato);
-        return this;
-    }
-
-    /**
-     * Adds potato to the burger ingredients.
-     * @return {Burger} The current instance (chaining).
-     */
-    addSalad() {
-        this._data.add(this.constructor._withSalad);
-        return this;
-    }
-
-    /**
-     * Removes cheese from the burger ingredients.
-     * @return {Burger} The current instance (chaining).
-     */
-    removeCheese() {
-        this._data.sub(this.constructor._withCheese);
-        return this;
-    }
-
-    /**
-     * Removes potato from the burger ingredients.
-     * @return {Burger} The current instance (chaining).
-     */
-    removePotato() {
-        this._data.sub(this.constructor._withPotato);
-        return this;
-    }
-
-    /**
-     * Removes potato from the burger ingredients.
-     * @return {Burger} The current instance (chaining).
-     */
-    removeSalad() {
-        this._data.sub(this.constructor._withSalad);
-        return this;
-    }
-}
-
-/**
- * Represents a drink, such as a cup of coffee or a glass of cola.
- */
-class Drink extends Product {
-    /**
-     * @param {string} type The drink type.
-     */
-    constructor(type) {
-        super({
-            coffee: new EntryData({ energy: 20, price: 80 }),
-            cola:   new EntryData({ energy: 40, price: 50 }),
-        }, type);
-    }
-}
-
-/**
- * Represents a salad, such as a Caesar or Olivier salad.
- */
+/** Represents a salad, such as a Caesar salad or an Olivier salad. */
 class Salad extends Product {
     /**
-     * @param {string} type The salad type.
-     * @param {number} weight The salad weight, in grams.
+     * @param {string} type The type of a salad, from a set.
+     * @param {number} weight The weight of a salad, in grams.
      */
-    constructor(type, weight) {
-        const defaultGrams = 100;
+     constructor(type, weight) {
+        super();
 
-        super({
+        this._type = type;
+        this._data.add(this.constructor.getOrFail({
             caesar:  new EntryData({ energy: 20, price: 100 }),
             olivier: new EntryData({ energy: 80, price:  50 }),
-        }, type);
+        }, type));
 
-        this._data.mul(weight / defaultGrams);
+        const defaultGrams = 100;
+        const multiplier = weight / defaultGrams;
+        this._data.mul(multiplier);
+    }
+
+    /** @return {string} The type of the salad. */
+    get type() {
+        return this._type;
     }
 }
