@@ -36,22 +36,22 @@ class Properties {
     }
 
     /**
+     * Deletes the given properties from the current ones.
+     * @param  {Properties} props The properties.
+     * @return {Properties} This instance (for chaining).
+     */
+    delete(props) {
+        Object.keys(this).forEach((key) => this[key] -= props[key]);
+        return this;
+    }
+
+    /**
      * Multiplies the current properties by the given value.
      * @param  {number} value The multiplier value.
      * @return {Properties} This instance (for chaining).
      */
     multiply(value) {
         Object.keys(this).forEach((key) => this[key] *= value);
-        return this;
-    }
-
-    /**
-     * Substracts the given properties from the current ones.
-     * @param  {Properties} props The properties.
-     * @return {Properties} This instance (for chaining).
-     */
-    substract(props) {
-        Object.keys(this).forEach((key) => this[key] -= props[key]);
         return this;
     }
 }
@@ -207,7 +207,7 @@ class Order extends Product {
     delete(prod) {
         return this._ensureNotPaid_(() => {
             this._prods_.delete(prod);
-            this._props_.substract(prod.props);
+            this._props_.delete(prod.props);
             return this;
         });
     }
