@@ -260,4 +260,13 @@ class Order extends Product {
         this._props_.substract(product.props);
         return this;
     }
+
+    /**
+     * Locks the order, making it immutable.
+     * @return {Order} This instance (for chaining).
+     */
+    payFor() {
+        this._isPaidFor_ = true;
+        return this;
+    }
 }
