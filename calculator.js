@@ -83,28 +83,50 @@ class Product {
 
 /** Represents a burger, nothing more to explain here. */
 class Burger extends Product {
+  /** @type {Error} */
+  _FILL_FAIL_ERROR = new Error("no burger fill is not chosen or is invalid");
+
+  /** @type {Error} */
+  _SIZE_FAIL_ERROR = new Error("no burger size is not chosen or is invalid");
+
+  /** @const {Properties} The big burger. */
+  BIG_SIZE = new Properties({ energy: 40, price: 100 });
+
+  /** @const {Properties} The small burger. */
+  SMALL_SIZE = new Properties({ energy: 20, price: 50 });
+
+  /** @const {Properties} The burger with cheese. */
+  WITH_CHEESE = new Properties({ energy: 20, price: 10 });
+
+  /** @const {Properties} The burger with potato. */
+  WITH_POTATO = new Properties({ energy: 10, price: 15 });
+
+  /** @const {Properties} The burger with salad. */
+  WITH_SALAD = new Properties({ energy: 5, price: 20 });
+
   /**
-   * @param {string} size    The size of a burger, from a set.
-   * @param {string} filling The filling for a burger, from a set.
+   * @param {string} size The size of a burger, from a set.
+   * @param {string} fill The fillfor a burger, from a set.
    */
-  constructor(size, filling) {
+  constructor(size, fill) {
     super();
 
-    this._props.add({
-      cheese: new Properties({ energy: 20, price: 10 }),
-      potato: new Properties({ energy: 10, price: 15 }),
-      salad:  new Properties({ energy:  5, price: 20 }),
-    }[this._filling = filling]);
+    if (fill instanceof Properties) {
+      this._props.add(this._fill = fill);
+    } else {
+      throw this._FILL_FAIL_ERROR;
+    }
 
-    this._props.add({
-      big:   new Properties({ energy: 40, price: 100 }),
-      small: new Properties({ energy: 20, price:  50 }),
-    }[this._size = size]);
+    if (size instanceof Properties) {
+      this._props.add(this._size = size);
+    } else {
+      throw this._SIZE_FAIL_ERROR;
+    }
   }
 
-  /** @return {string} The filling of the burger, from a set. */
-  get filling() {
-    return this._filling;
+  /** @return {string} The fill of the burger, from a set. */
+  get fill() {
+    return this._fill;
   }
 
   /** @return {string} The size of the burger, from a set. */
@@ -115,14 +137,24 @@ class Burger extends Product {
 
 /** Represents a drink, such as a cup of coffee or a glass of cola. */
 class Drink extends Product {
+  /** @type {Error} */
+  _TYPE_FAIL_ERROR = new Error("no drink type is not chosen or is invalid");
+
+  /** @const {Properties} The coffee. */
+  COFFEE = new Properties({ energy: 20, price: 80 });
+
+  /** @const {Properties} The cola. */
+  COLA = new Properties({ energy: 40, price: 50 });
+
   /** @param {string} type The type of a drink, from a set. */
   constructor(type) {
     super();
 
-    this._props.add({
-      coffee: new Properties({ energy: 20, price: 80 }),
-      cola:   new Properties({ energy: 40, price: 50 }),
-    }[this._type = type]);
+    if (type instanceof Properties) {
+      this._props.add(this._type = type);
+    } else {
+      throw this._TYPE_FAIL_ERROR;
+    }
   }
 
   /** @return {string} The type of the drink, from a set. */
@@ -133,6 +165,15 @@ class Drink extends Product {
 
 /** Represents a salad, such as a Caesar salad or an Olivier salad. */
 class Salad extends Product {
+  /** @type {Error} */
+  _TYPE_FAIL_ERROR = new Error("no drink type is not chosen or is invalid");
+
+  /** @const {Properties} The Caesar salad. */
+  CAESAR = new Properties({ energy: 20, price: 100 });
+
+  /** @const {Properties} The Olivier salad. */
+  OLIVIER = new Properties({ energy: 80, price: 50 });
+
   /** @type {number} */
   _weight = 100;
 
@@ -143,11 +184,11 @@ class Salad extends Product {
   constructor(type, weight) {
     super();
 
-    this._props.add({
-      caesar:  new Properties({ energy: 20, price: 100 }),
-      olivier: new Properties({ energy: 80, price:  50 }),
-    }[this._type = type]);
-    this.weight = weight;
+    if (type instanceof Properties) {
+      this._props.add(this._type = type);
+    } else {
+      throw this._TYPE_FAIL_ERROR;
+    }
   }
 
   /** @return {string} The type of the salad, from a set. */
@@ -170,6 +211,9 @@ class Salad extends Product {
 
 /** Represents the order, containing the order. */
 class Order extends Product {
+  /** @type {Error} */
+  _PAID_FOR_ERROR = new Error("the product is already paid for");
+
   /** @type {boolean} */
   _isPaidFor = false;
 
@@ -177,16 +221,36 @@ class Order extends Product {
   _prods = new Set();
 
   /**
-   * Ensures that the order was not paid for yet.
-   * @param  {Function} callback The callback.
-   * @param  {...any}   args     The callback arguments.
-   * @return {any}      The return value of the callback.
+   * Adds the product to the order,
+   * regardless of whether the order was paid for.
+   * @param  {Product} prod The product to add.
    */
-  _ensureNotPaid_(callback, ...args) {
-    if (this._isPaidFor_) {
-      throw new Error("the product is already paid for");
+  _addUnensured(prod) {
+    this._prods.add(prod);
+    this._props.add(prod.props);
+  }
+
+  /**
+   * Deletes the product from the order,
+   * regardless of whether the order was paid for.
+   * @param  {Product} prod The product to delete.
+   */
+  _deleteUnensured(prod) {
+    this._prods.delete(prod);
+    this._props.delete(prod.props);
+  }
+
+  /**
+   * Ensures that the order was not paid for yet.
+   * @param  {Function} call The callback function.
+   * @param  {...any}   args The callback arguments.
+   * @return {any}      The result of the callback.
+   */
+  _ensureNotPaid(call, ...args) {
+    if (this._isPaidFor) {
+      throw _PAID_FOR_ERROR;
     } else {
-      return callback(...args);
+      return call(...args);
     }
   }
 
@@ -195,12 +259,9 @@ class Order extends Product {
    * @param  {Product} prod The product to add.
    * @return {Order}   This instance (for chaining).
    */
-  add(prod) {
-    return this._ensureNotPaid(() => {
-      this._prods.add(prod);
-      this._props.add(prod.props);
-      return this;
-    });
+   add(prod) {
+    this._ensureNotPaid(this._addUnensured);
+    return this;
   }
 
   /**
@@ -209,11 +270,8 @@ class Order extends Product {
    * @return {Order}   This instance (for chaining).
    */
   delete(prod) {
-    return this._ensureNotPaid(() => {
-      this._prods.delete(prod);
-      this._props.delete(prod.props);
-      return this;
-    });
+    this._ensureNotPaid(this._deleteUnensured);
+    return this;
   }
 
   /**
