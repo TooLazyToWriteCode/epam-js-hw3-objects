@@ -84,10 +84,10 @@ class Product {
 /** Represents a burger, nothing more to explain here. */
 class Burger extends Product {
   /** @type {Error} */
-  _FILL_FAIL_ERROR = new Error("no burger fill is not chosen or is invalid");
+  _FILL_FAIL_ERROR = new Error("the burger fill is not chosen or is invalid");
 
   /** @type {Error} */
-  _SIZE_FAIL_ERROR = new Error("no burger size is not chosen or is invalid");
+  _SIZE_FAIL_ERROR = new Error("the burger size is not chosen or is invalid");
 
   /** @const {Properties} The big burger. */
   BIG_SIZE = new Properties({ energy: 40, price: 100 });
@@ -138,7 +138,7 @@ class Burger extends Product {
 /** Represents a drink, such as a cup of coffee or a glass of cola. */
 class Drink extends Product {
   /** @type {Error} */
-  _TYPE_FAIL_ERROR = new Error("no drink type is not chosen or is invalid");
+  _TYPE_FAIL_ERROR = new Error("the drink type is not chosen or is invalid");
 
   /** @const {Properties} The coffee. */
   COFFEE = new Properties({ energy: 20, price: 80 });
@@ -166,7 +166,7 @@ class Drink extends Product {
 /** Represents a salad, such as a Caesar salad or an Olivier salad. */
 class Salad extends Product {
   /** @type {Error} */
-  _TYPE_FAIL_ERROR = new Error("no drink type is not chosen or is invalid");
+  _TYPE_FAIL_ERROR = new Error("the salad type is not chosen or is invalid");
 
   /** @const {Properties} The Caesar salad. */
   CAESAR = new Properties({ energy: 20, price: 100 });
@@ -259,7 +259,7 @@ class Order extends Product {
    * @param  {Product} prod The product to add.
    * @return {Order}   This instance (for chaining).
    */
-   add(prod) {
+  add(prod) {
     this._ensureNotPaid(this._addUnensured);
     return this;
   }
