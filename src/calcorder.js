@@ -139,16 +139,21 @@ class Salad extends Product {
     constructor(type, weight) {
         super();
 
-        this.weight = weight;
         this._props_.add({
             caesar:  new Properties({ energy: 20, price: 100 }),
             olivier: new Properties({ energy: 80, price:  50 }),
         }[this._type_ = type]);
+        this.weight = weight;
     }
 
     /** @return {string} The type of the salad, from a set. */
     get type() {
         return this._type_;
+    }
+
+    /** @return {number} The weight of a salad, in grams. */
+    get weight() {
+        return this._weight_;
     }
 
     /** @param {number} weight The weight of a salad, in grams. */
@@ -165,7 +170,7 @@ class Order extends Product {
     _isPaidFor_ = false;
 
     /** @type {Set<Product>} */
-    _products_ = new Set();
+    _prods_ = new Set();
 
     /**
      * Ensures that the order was not paid for yet.
@@ -183,26 +188,26 @@ class Order extends Product {
 
     /**
      * Adds the product to the order.
-     * @param {Product} product The product to add.
+     * @param {Product} prod The product to add.
      * @return {Order} This instance (for chaining).
      */
-    add(product) {
+    add(prod) {
         return this._ensureNotPaid_(() => {
-            this._products_.add(product);
-            this._props_.add(product.props);
+            this._prods_.add(prod);
+            this._props_.add(prod.props);
             return this;
         });
     }
 
     /**
      * Deletes the product from the order.
-     * @param {Product} product The product to delete.
+     * @param {Product} prod The product to delete.
      * @return {Order} This instance (for chaining).
      */
-    delete(product) {
+    delete(prod) {
         return this._ensureNotPaid_(() => {
-            this._products_.delete(product);
-            this._props_.substract(product.props);
+            this._prods_.delete(prod);
+            this._props_.substract(prod.props);
             return this;
         });
     }
@@ -212,9 +217,7 @@ class Order extends Product {
      * @return {Order} This instance (for chaining).
      */
     payFor() {
-        return this._ensureNotPaid_(() => {
-            this._isPaidFor_ = true;
-            return this;
-        });
+        this._ensureNotPaid_(() => this._isPaidFor_ = true);
+        return this;
     }
 }
