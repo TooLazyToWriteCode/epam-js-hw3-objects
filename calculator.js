@@ -44,7 +44,7 @@ class Properties {
    */
   add(props) {
     Object.keys(this).forEach((key) => {
-      if (key !== "id") {
+      if (key !== "_id") {
         this[key] += props[key];
       }
     });
@@ -59,7 +59,7 @@ class Properties {
    */
   delete(props) {
     Object.keys(this).forEach((key) => {
-      if (key !== "id") {
+      if (key !== "_id") {
         this[key] -= props[key];
       }
     });
@@ -74,7 +74,7 @@ class Properties {
    */
   multiply(value) {
     Object.keys(this).forEach((key) => {
-      if (key !== "id") {
+      if (key !== "_id") {
         this[key] *= value;
       }
     });
@@ -464,34 +464,6 @@ class Order extends Product {
   _prods = new Set();
 
   /**
-   * Adds the product to the order
-   * regardless of whether the order was paid for.
-   * @param  {Product} prod The product to add.
-   */
-  _addUnensured(prod) {
-    this._prods.add(prod);
-    this._props.add(prod.props);
-  }
-
-  /**
-   * Deletes the product from the order
-   * regardless of whether the order was paid for.
-   * @param  {Product} prod The product to delete.
-   */
-  _deleteUnensured(prod) {
-    this._prods.delete(prod);
-    this._props.delete(prod.props);
-  }
-
-  /**
-   * Pays for the order and makes it immutable
-   * regardless of whether the order was paid for.
-   */
-  _payForUnensured() {
-    this._isPaidFor = true;
-  }
-
-  /**
    * Ensures that the order was not paid for yet.
    * @param  {Function} call The callback function.
    * @param  {...any}   args The callback arguments.
@@ -511,7 +483,11 @@ class Order extends Product {
    * @return {Order}   This instance (for chaining).
    */
   add(prod) {
-    this._ensureNotPaid(this._addUnensured, prod);
+    this._ensureNotPaid(() => {
+      this._prods.add(prod);
+      this._props.add(prod.props);
+    });
+
     return this;
   }
 
@@ -521,7 +497,11 @@ class Order extends Product {
    * @return {Order}   This instance (for chaining).
    */
   delete(prod) {
-    this._ensureNotPaid(this._deleteUnensured, prod);
+    this._ensureNotPaid(() => {
+      this._prods.delete(prod);
+      this._props.delete(prod.props);
+    });
+
     return this;
   }
 
@@ -530,7 +510,10 @@ class Order extends Product {
    * @return {Order} This instance (for chaining).
    */
   payFor() {
-    this._ensureNotPaid(this._payForUnensured);
+    this._ensureNotPaid(() => {
+      this._isPaidFor = true;
+    });
+
     return this;
   }
 }
