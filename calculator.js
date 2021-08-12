@@ -128,11 +128,7 @@ class Product {
    */
   printEnergy() {
     console.log(
-      `Your ${
-        this.constructor._NAME
-      } consists of ${
-        this._props.energy
-      } calories.`
+      `Your ${this.constructor._NAME} consists of ${this.energy} calories.`
     );
 
     return this;
@@ -154,11 +150,7 @@ class Product {
    */
   printPrice() {
     console.log(
-      `Your ${
-        this.constructor._NAME
-      } is worth ${
-        this._props.price
-      } tugriks.`
+      `Your ${this.constructor._NAME} is worth ${this.price} tugriks.`
     );
 
     return this;
