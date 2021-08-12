@@ -1,7 +1,8 @@
 /**
  * Represents properties of an order, a product, a type of a product or a
  * component of a product. It contains such settings as a price, an energy
- * value, and other.
+ * value, and other. It is intended for usage by other classes, and is
+ * pretty useless on itself otherwise.
  */
 class Properties {
   /**
@@ -82,7 +83,10 @@ class Properties {
   }
 }
 
-/** Represents a single sold food product of any kind. */
+/**
+ * Represents a single sold food product of any kind. It is intended for
+ * usage by other classes, and is pretty useless on itself otherwise.
+ */
 class Product {
   /** @const {string} The name which identifies the product. */
   static _NAME = "product";
@@ -181,32 +185,30 @@ class Product {
 
 /**
  * Represents a burger, nothing more to explain here.
- * <code>
- *   <pre>
- *     // A big burger with cheese.
- *     const burger1 = new Burger(Burger.BIG, Burger.WITH_CHEESE);
- *     // A small burger with potato.
- *     const burger2 = new Burger(Burger.SMALL, Burger.WITH_POTATO);
- *     // A small burger with salad.
- *     const burger3 = new Burger(Burger.SMALL, Burger.WITH_SALAD);
- *     // Error, unknown burger size provided.
- *     const burger4 = new Burger('average');
- *     // Error, no burger size provided.
- *     const burger5 = new Burger();
- *     // Error, unknown burger filling provided.
- *     const burger6 = new Burger(Burger.SMALL, 'fish');
- *     // Error, no burger filling provided.
- *     const burger7 = new Burger(Burger.SMALL);
- *     // Get the burger energy value.
- *     console.log(burger1.energy); // 60
- *     // Get the burger price.
- *     console.log(burger1.price); // 110
- *     // Get the burger size.
- *     console.log(burger1.size); // "big"
- *     // Get the burger filling.
- *     console.log(burger1.filling); // "cheese"
- *   </pre>
- * </code>
+ * ```js
+ * // A big burger with cheese.
+ * const burger1 = new Burger(Burger.BIG, Burger.WITH_CHEESE);
+ * // A small burger with potato.
+ * const burger2 = new Burger(Burger.SMALL, Burger.WITH_POTATO);
+ * // A small burger with salad.
+ * const burger3 = new Burger(Burger.SMALL, Burger.WITH_SALAD);
+ * // Error, unknown burger size provided.
+ * const burger4 = new Burger('average');
+ * // Error, no burger size provided.
+ * const burger5 = new Burger();
+ * // Error, unknown burger filling provided.
+ * const burger6 = new Burger(Burger.SMALL, 'fish');
+ * // Error, no burger filling provided.
+ * const burger7 = new Burger(Burger.SMALL);
+ * // Get the burger energy value.
+ * console.log(burger1.energy); // 60
+ * // Get the burger price.
+ * console.log(burger1.price); // 110
+ * // Get the burger size.
+ * console.log(burger1.size); // "big"
+ * // Get the burger filling.
+ * console.log(burger1.filling); // "cheese"
+ * ```
  */
 class Burger extends Product {
   /** @const {string} The name which identifies the product. */
@@ -263,24 +265,22 @@ class Burger extends Product {
 
 /**
  * Represents a drink, such as a cup of coffee or a glass of cola.
- * <code>
- *   <pre>
- *     // A cup of coffee.
- *     const drink1 = new Drink(Drink.COFFEE);
- *     // A glass of cola.
- *     const drink2 = new Drink(Drink.COLA);
- *     // Error, unknown drink provided.
- *     const drink3 = new Drink('tea');
- *     // Error, no drink provided.
- *     const drink4 = new Drink();
- *     // Get the drink energy value.
- *     console.log(drink1.energy); // 20
- *     // Get the drink price.
- *     console.log(drink1.price); // 80
- *     // Get the drink type.
- *     console.log(drink1.type); // "coffee"
- *   </pre>
- * </code>
+ * ```js
+ * // A cup of coffee.
+ * const drink1 = new Drink(Drink.COFFEE);
+ * // A glass of cola.
+ * const drink2 = new Drink(Drink.COLA);
+ * // Error, unknown drink provided.
+ * const drink3 = new Drink('tea');
+ * // Error, no drink provided.
+ * const drink4 = new Drink();
+ * // Get the drink energy value.
+ * console.log(drink1.energy); // 20
+ * // Get the drink price.
+ * console.log(drink1.price); // 80
+ * // Get the drink type.
+ * console.log(drink1.type); // "coffee"
+ * ```
  */
 class Drink extends Product {
   /** @const {string} The name which identifies the product. */
@@ -311,33 +311,31 @@ class Drink extends Product {
 
 /**
  * Represents a salad, such as a Caesar salad or an Olivier salad.
- * <code>
- *   <pre>
- *     // A Caesar salad, 100 grams.
- *     const salad1 = new Salad(Salad.CAESAR);
- *     // A Caesar salad, 156 grams.
- *     const salad2 = new Salad(Salad.CAESAR, 156);
- *     // An Olivier salad, 240 grams.
- *     const salad3 = new Salad(Salad.OLIVIER, 240);
- *     // Error, invalid salad weight provided.
- *     const salad4 = new Salad(Salad.OLIVIER, -3);
- *     // Error, unknown salad provided.
- *     const salad5 = new Salad('crab');
- *     // Error, no salad provided.
- *     const salad6 = new Salad();
- *     // Get the salad energy value.
- *     console.log(salad1.energy); // 20
- *     // Get the salad price.
- *     console.log(salad1.price); // 100
- *     // Get the salad type.
- *     console.log(salad1.type); // "caesar"
- *     // Get the salad weight.
- *     console.log(salad1.weight); // 100
- *     // Update the salad weight.
- *     salad1.weight = 128;
- *     console.log(salad1.weight); // 128
- *   </pre>
- * </code>
+ * ```js
+ * // A Caesar salad, 100 grams.
+ * const salad1 = new Salad(Salad.CAESAR);
+ * // A Caesar salad, 156 grams.
+ * const salad2 = new Salad(Salad.CAESAR, 156);
+ * // An Olivier salad, 240 grams.
+ * const salad3 = new Salad(Salad.OLIVIER, 240);
+ * // Invalid salad weight provided: assume 100 grams.
+ * const salad4 = new Salad(Salad.OLIVIER, -3);
+ * // Error, unknown salad provided.
+ * const salad5 = new Salad('crab');
+ * // Error, no salad provided.
+ * const salad6 = new Salad();
+ * // Get the salad energy value.
+ * console.log(salad1.energy); // 20
+ * // Get the salad price.
+ * console.log(salad1.price); // 100
+ * // Get the salad type.
+ * console.log(salad1.type); // "caesar"
+ * // Get the salad weight.
+ * console.log(salad1.weight); // 100
+ * // Update the salad weight.
+ * salad1.weight = 128;
+ * console.log(salad1.weight); // 128
+ * ```
  */
 class Salad extends Product {
   /** @const {string} The name which identifies the product. */
@@ -403,7 +401,52 @@ class Salad extends Product {
   }
 }
 
-/** Represents the order, containing the order. */
+/**
+ * Represents the order, containing the order. Supports chaining.
+ * ```js
+ * // A random salad.
+ * const salad = new Salad(Salad.CAESAR, 54);
+ * // A random drink.
+ * const drink = new Drink(Drink.COFFEE);
+ * // The following can also be done separately.
+ * // The price and energy properties are available,
+ * // but they obviously do not support chaining.
+ * // E is the energy value, P is the price.
+ * new Order()
+ *   // Add the salad.   [+10.8E, +54.0P]
+ *   .add(salad)
+ *   // Add the burger.  [+30.0E, +65.0P]
+ *   .add(new Burger(Burger.SMALL, Burger.WITH_POTATO))
+ *   // Add the cola.    [+40.0E, +50.0P]
+ *   .add(new Drink(Drink.COLA))
+ *   // Add the drink.   [+20.0E, +80.0P]
+ *   .add(drink)
+ *   // Add the coffee.  [+20.0E, +80.0P]
+ *   .add(new Drink(Drink.COFFEE))
+ *   // Delete the cola. [-20.0E, -80.0P]
+ *   .delete(drink)
+ *   // Add the salad.   [+17.2E, +86.0P]
+ *   .add(new Salad(Salad.CAESAR, 86))
+ *   // Outputs the energy value of 118.
+ *   .printEnergy()
+ *   // Outputs the price of 335.
+ *   .printPrice()
+ *   // Delete the salad.[-10.8E, -54.0P]
+ *   .delete(salad)
+ *   // Pay for the order and lock it.
+ *   .payFor()
+ *   // Outputs the price of 281.
+ *   .printPrice()
+ *   // Outputs the energy value of 107.2.
+ *   .printEnergy()
+ *   // Outputs the price of 281.
+ *   // Outputs the energy value of 107.2.
+ *   .printInfo()
+ *   // Error, the order is paid for.
+ *   .add(new Drink(Drink.COLA));
+ *
+ * ```
+ */
 class Order extends Product {
   /** @const {string} The name which identifies the product. */
   static _NAME = "order";
