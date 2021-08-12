@@ -235,6 +235,7 @@ class Burger extends Product {
   /**
    * @param {Properties} size The size of a burger, from a set.
    * @param {Properties} filling The filling of a burger, from a set.
+   * @throws If the properties are not set or are unknown.
    */
   constructor(size, filling) {
     super();
@@ -292,7 +293,10 @@ class Drink extends Product {
   /** @const {Properties} The cola. */
   static COLA = new Properties({ id: "cola", energy: 40, price: 50 });
 
-  /** @param {Properties} type The type of a drink, from a set. */
+  /**
+   * @param {Properties} type The type of a drink, from a set.
+   * @throws If the type is not set or is unknown.
+   */
   constructor(type) {
     super();
 
@@ -359,6 +363,7 @@ class Salad extends Product {
   /**
    * @param {Properties} type   The type of a salad, from a set.
    * @param {number}     weight The weight of a salad, in grams.
+   * @throws If the type is not set or is unknown.
    */
   constructor(type, weight) {
     super();
@@ -465,15 +470,11 @@ class Order extends Product {
 
   /**
    * Ensures that the order was not paid for yet.
-   * @param  {Function} call The callback function.
-   * @param  {...any}   args The callback arguments.
-   * @return {any}      The result of the callback.
+   * @throws When the order is already paid for.
    */
-  _ensureNotPaid(call, ...args) {
+  _ensureNotPaid() {
     if (this._isPaidFor) {
       throw this.constructor._PAID_FOR_ERROR;
-    } else {
-      return call.call(this, ...args);
     }
   }
 
@@ -481,13 +482,12 @@ class Order extends Product {
    * Adds the product to the order.
    * @param  {Product} prod The product to add.
    * @return {Order}   This instance (for chaining).
+   * @throws When the order is already paid for.
    */
   add(prod) {
-    this._ensureNotPaid(() => {
-      this._prods.add(prod);
-      this._props.add(prod.props);
-    });
-
+    this._ensureNotPaid();
+    this._prods.add(prod);
+    this._props.add(prod.props);
     return this;
   }
 
@@ -495,25 +495,23 @@ class Order extends Product {
    * Deletes the product from the order.
    * @param  {Product} prod The product to delete.
    * @return {Order}   This instance (for chaining).
+   * @throws When the order is already paid for.
    */
   delete(prod) {
-    this._ensureNotPaid(() => {
-      this._prods.delete(prod);
-      this._props.delete(prod.props);
-    });
-
+    this._ensureNotPaid();
+    this._prods.delete(prod);
+    this._props.delete(prod.props);
     return this;
   }
 
   /**
    * Pays for the order and makes it immutable.
    * @return {Order} This instance (for chaining).
+   * @throws When the order is already paid for.
    */
   payFor() {
-    this._ensureNotPaid(() => {
-      this._isPaidFor = true;
-    });
-
+    this._ensureNotPaid();
+    this._isPaidFor = true;
     return this;
   }
 }
