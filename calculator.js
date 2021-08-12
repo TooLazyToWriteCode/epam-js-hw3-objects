@@ -6,7 +6,7 @@
 class Properties {
   /**
    * @param {Object} props        The list of properties.
-   * @param {number} props.energy The energy, in calories.
+   * @param {number} props.energy The energy value, in calories.
    * @param {number} props.price  The price, in tugriks.
    */
   constructor(props = {}) {
@@ -19,7 +19,7 @@ class Properties {
     return Object.assign({}, this);
   }
 
-  /** @return {number} The energy, in calories. */
+  /** @return {number} The energy value, in calories. */
   get energy() {
     return this._energy;
   }
@@ -65,7 +65,7 @@ class Product {
   /** @type {Properties} */
   _props = new Properties();
 
-  /** @return {number} The energy, in calories. */
+  /** @return {number} The energy value, in calories. */
   get energy() {
     return this._props.energy;
   }
@@ -228,7 +228,7 @@ class Salad extends Product {
 
   /** @param {number} weight The weight of a salad, in grams. */
   set weight(weight) {
-    // Do not use `_weight` as a setter!
+    // Do not use _weight as a setter elsewhere!
     this._props.multiply(weight / this._weight);
     this._weight = weight;
   }
@@ -304,6 +304,34 @@ class Order extends Product {
    */
   delete(prod) {
     this._ensureNotPaid(this._deleteUnensured, prod);
+    return this;
+  }
+
+  /**
+   * Prints the order energy value to the console.
+   * @return {Order} This instance (for chaining).
+   */
+  printEnergy() {
+    console.log(`Your order consists of ${this._props.energy} calories.`);
+    return this;
+  }
+
+  /**
+   * Prints the order information to the console.
+   * @return {Order} This instance (for chaining).
+   */
+  printInfo() {
+    this.printPrice();
+    this.printEnergy();
+    return this;
+  }
+
+  /**
+   * Prints the order price to the console.
+   * @return {Order} This instance (for chaining).
+   */
+  printPrice() {
+    console.log(`Your order is worth ${this._props.price} tugriks.`);
     return this;
   }
 
