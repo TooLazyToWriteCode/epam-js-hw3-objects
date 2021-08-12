@@ -250,6 +250,14 @@ class Order extends Product {
   }
 
   /**
+   * Pays for the order and makes it immutable,
+   * regardless of whether the order was paid for.
+   */
+  _payForUnensured() {
+    this._isPaidFor = true;
+  }
+
+  /**
    * Ensures that the order was not paid for yet.
    * @param  {Function} call The callback function.
    * @param  {...any}   args The callback arguments.
@@ -288,7 +296,7 @@ class Order extends Product {
    * @return {Order} This instance (for chaining).
    */
   payFor() {
-    this._ensureNotPaid(() => this._isPaidFor = true);
+    this._ensureNotPaid(this._payForUnensured);
     return this;
   }
 }
