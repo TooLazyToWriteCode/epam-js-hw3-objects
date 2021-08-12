@@ -470,7 +470,7 @@ class Order extends Product {
 
   /**
    * Ensures that the order was not paid for yet.
-   * @throws When the order is already paid for.
+   * @throws If the order is already paid for.
    */
   _ensureNotPaid() {
     if (this._isPaidFor) {
@@ -482,7 +482,7 @@ class Order extends Product {
    * Adds the product to the order.
    * @param  {Product} prod The product to add.
    * @return {Order}   This instance (for chaining).
-   * @throws When the order is already paid for.
+   * @throws If the order is already paid for.
    */
   add(prod) {
     this._ensureNotPaid();
@@ -495,7 +495,7 @@ class Order extends Product {
    * Deletes the product from the order.
    * @param  {Product} prod The product to delete.
    * @return {Order}   This instance (for chaining).
-   * @throws When the order is already paid for.
+   * @throws If the order is already paid for.
    */
   delete(prod) {
     this._ensureNotPaid();
@@ -507,7 +507,7 @@ class Order extends Product {
   /**
    * Pays for the order and makes it immutable.
    * @return {Order} This instance (for chaining).
-   * @throws When the order is already paid for.
+   * @throws If the order is already paid for.
    */
   payFor() {
     this._ensureNotPaid();
