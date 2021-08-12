@@ -90,10 +90,10 @@ class Burger extends Product {
   _SIZE_FAIL_ERROR = new Error("the burger size is not chosen or is invalid");
 
   /** @const {Properties} The big burger. */
-  BIG_SIZE = new Properties({ energy: 40, price: 100 });
+  BIG = new Properties({ energy: 40, price: 100 });
 
   /** @const {Properties} The small burger. */
-  SMALL_SIZE = new Properties({ energy: 20, price: 50 });
+  SMALL = new Properties({ energy: 20, price: 50 });
 
   /** @const {Properties} The burger with cheese. */
   WITH_CHEESE = new Properties({ energy: 20, price: 10 });
@@ -111,16 +111,16 @@ class Burger extends Product {
   constructor(size, fill) {
     super();
 
-    if (fill instanceof Properties) {
-      this._props.add(this._fill = fill);
-    } else {
-      throw this._FILL_FAIL_ERROR;
-    }
-
     if (size instanceof Properties) {
       this._props.add(this._size = size);
     } else {
       throw this._SIZE_FAIL_ERROR;
+    }
+
+    if (fill instanceof Properties) {
+      this._props.add(this._fill = fill);
+    } else {
+      throw this._FILL_FAIL_ERROR;
     }
   }
 
