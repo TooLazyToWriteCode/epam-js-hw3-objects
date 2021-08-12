@@ -246,7 +246,7 @@ class Order extends Product {
   _prods = new Set();
 
   /**
-   * Adds the product to the order,
+   * Adds the product to the order
    * regardless of whether the order was paid for.
    * @param  {Product} prod The product to add.
    */
@@ -256,7 +256,7 @@ class Order extends Product {
   }
 
   /**
-   * Deletes the product from the order,
+   * Deletes the product from the order
    * regardless of whether the order was paid for.
    * @param  {Product} prod The product to delete.
    */
@@ -266,7 +266,7 @@ class Order extends Product {
   }
 
   /**
-   * Pays for the order and makes it immutable,
+   * Pays for the order and makes it immutable
    * regardless of whether the order was paid for.
    */
   _payForUnensured() {
@@ -283,7 +283,7 @@ class Order extends Product {
     if (this._isPaidFor) {
       throw this.constructor._PAID_FOR_ERROR;
     } else {
-      return call(...args);
+      return call.call(this, ...args);
     }
   }
 
@@ -293,7 +293,7 @@ class Order extends Product {
    * @return {Order}   This instance (for chaining).
    */
   add(prod) {
-    this._ensureNotPaid(this._addUnensured);
+    this._ensureNotPaid(this._addUnensured, prod);
     return this;
   }
 
@@ -303,7 +303,7 @@ class Order extends Product {
    * @return {Order}   This instance (for chaining).
    */
   delete(prod) {
-    this._ensureNotPaid(this._deleteUnensured);
+    this._ensureNotPaid(this._deleteUnensured, prod);
     return this;
   }
 
