@@ -62,8 +62,50 @@ class Properties {
 
 /** Represents a single sold food product of any kind. */
 class Product {
-  /** @type {Properties} */
+  /** @const {string} The name which identifies the product. */
+  static _NAME = "product";
+
+  /** @const {boolean} Whether the errors have been initialized. */
+  static _ERRORS_INITED = false;
+
+  /**
+   * @const {Error} The error to throw when no product
+   * filling is provided, or the provided filling is not valid.
+   */
+  static _FILL_FAIL_ERROR;
+
+  /**
+   * @const {Error} The error to throw when no product
+   * size is provided, or the provided size is not valid.
+   */
+  static _SIZE_FAIL_ERROR;
+
+  /**
+   * @const {Error} The error to throw when no product
+   * type is provided, or the provided type is not valid.
+   */
+  static _TYPE_FAIL_ERROR;
+
+  /** @var {Properties} The properties of the product. */
   _props = new Properties();
+
+  constructor() {
+    if (!this.constructor._ERRORS_INITED) {
+      this.constructor._FILL_FAIL_ERROR = new Error(
+        `the ${this.constructor._NAME} filling is not chosen or is invalid`
+      );
+
+      this.constructor._SIZE_FAIL_ERROR = new Error(
+        `the ${this.constructor._NAME} size is not chosen or is invalid`
+      );
+
+      this.constructor._TYPE_FAIL_ERROR = new Error(
+        `the ${this.constructor._NAME} type is not chosen or is invalid`
+      );
+    } else {
+      this.constructor._ERRORS_INITED = true;
+    }
+  }
 
   /** @return {number} The energy value, in calories. */
   get energy() {
@@ -79,19 +121,54 @@ class Product {
   get props() {
     return this._props.copy;
   }
+
+  /**
+   * Prints the product energy value to the console.
+   * @return {Product} This instance (for chaining).
+   */
+  printEnergy() {
+    console.log(
+      `Your ${
+        this.constructor._NAME
+      } consists of ${
+        this._props.energy
+      } calories.`
+    );
+
+    return this;
+  }
+
+  /**
+   * Prints the product information to the console.
+   * @return {Product} This instance (for chaining).
+   */
+  printInfo() {
+    this.printPrice();
+    this.printEnergy();
+    return this;
+  }
+
+  /**
+   * Prints the product price to the console.
+   * @return {Product} This instance (for chaining).
+   */
+  printPrice() {
+    console.log(
+      `Your ${
+        this.constructor._NAME
+      } is worth ${
+        this._props.price
+      } tugriks.`
+    );
+
+    return this;
+  }
 }
 
 /** Represents a burger, nothing more to explain here. */
 class Burger extends Product {
-  /** @type {Error} */
-  static _FILL_FAIL_ERROR = new Error(
-    "the burger fill is not chosen or is invalid"
-  );
-
-  /** @type {Error} */
-  static _SIZE_FAIL_ERROR = new Error(
-    "the burger size is not chosen or is invalid"
-  );
+  /** @const {string} The name which identifies the product. */
+  static _NAME = "burger";
 
   /** @const {Properties} The big burger. */
   static BIG = new Properties({ energy: 40, price: 100 });
@@ -141,10 +218,8 @@ class Burger extends Product {
 
 /** Represents a drink, such as a cup of coffee or a glass of cola. */
 class Drink extends Product {
-  /** @type {Error} */
-  static _TYPE_FAIL_ERROR = new Error(
-    "the drink type is not chosen or is invalid"
-  );
+  /** @const {string} The name which identifies the product. */
+  static _NAME = "drink";
 
   /** @const {Properties} The coffee. */
   static COFFEE = new Properties({ energy: 20, price: 80 });
@@ -171,15 +246,13 @@ class Drink extends Product {
 
 /** Represents a salad, such as a Caesar salad or an Olivier salad. */
 class Salad extends Product {
-  /** @type {Error} */
-  static _TYPE_FAIL_ERROR = new Error(
-    "the salad type is not chosen or is invalid"
-  );
+  /** @const {string} The name which identifies the product. */
+  static _NAME = "salad";
 
-  /** @type {string} */
+  /** @const {string} The message to output when the weight is not chosen. */
   static _WEIGHT_LOG = "the salad weight is not chosen, assuming 100g";
 
-  /** @type {string} */
+  /** @const {string} The message to output when the weight is not valid. */
   static _WEIGHT_WARN = "the salad weight is invalid, assuming 100g";
 
   /** @const {Properties} The Caesar salad. */
@@ -188,7 +261,7 @@ class Salad extends Product {
   /** @const {Properties} The Olivier salad. */
   static OLIVIER = new Properties({ energy: 80, price: 50 });
 
-  /** @type {number} */
+  /** @var {number} The weight of the salad. */
   _weight = 100;
 
   /**
@@ -236,13 +309,19 @@ class Salad extends Product {
 
 /** Represents the order, containing the order. */
 class Order extends Product {
-  /** @type {Error} */
+  /** @const {string} The name which identifies the product. */
+  static _NAME = "order";
+
+  /**
+   * @const {Error} The error to throw when trying
+   * to change the order that was already paid for.
+   */
   static _PAID_FOR_ERROR = new Error("the product is already paid for");
 
-  /** @type {boolean} */
+  /** @var {boolean} Whether the order was paid for. */
   _isPaidFor = false;
 
-  /** @type {Set<Product>} */
+  /** @var {Set<Product>} All the products in the order. */
   _prods = new Set();
 
   /**
@@ -304,34 +383,6 @@ class Order extends Product {
    */
   delete(prod) {
     this._ensureNotPaid(this._deleteUnensured, prod);
-    return this;
-  }
-
-  /**
-   * Prints the order energy value to the console.
-   * @return {Order} This instance (for chaining).
-   */
-  printEnergy() {
-    console.log(`Your order consists of ${this._props.energy} calories.`);
-    return this;
-  }
-
-  /**
-   * Prints the order information to the console.
-   * @return {Order} This instance (for chaining).
-   */
-  printInfo() {
-    this.printPrice();
-    this.printEnergy();
-    return this;
-  }
-
-  /**
-   * Prints the order price to the console.
-   * @return {Order} This instance (for chaining).
-   */
-  printPrice() {
-    console.log(`Your order is worth ${this._props.price} tugriks.`);
     return this;
   }
 
