@@ -84,25 +84,29 @@ class Product {
 /** Represents a burger, nothing more to explain here. */
 class Burger extends Product {
   /** @type {Error} */
-  _FILL_FAIL_ERROR = new Error("the burger fill is not chosen or is invalid");
+  static _FILL_FAIL_ERROR = new Error(
+    "the burger fill is not chosen or is invalid"
+  );
 
   /** @type {Error} */
-  _SIZE_FAIL_ERROR = new Error("the burger size is not chosen or is invalid");
+  static _SIZE_FAIL_ERROR = new Error(
+    "the burger size is not chosen or is invalid"
+  );
 
   /** @const {Properties} The big burger. */
-  BIG = new Properties({ energy: 40, price: 100 });
+  static BIG = new Properties({ energy: 40, price: 100 });
 
   /** @const {Properties} The small burger. */
-  SMALL = new Properties({ energy: 20, price: 50 });
+  static SMALL = new Properties({ energy: 20, price: 50 });
 
   /** @const {Properties} The burger with cheese. */
-  WITH_CHEESE = new Properties({ energy: 20, price: 10 });
+  static WITH_CHEESE = new Properties({ energy: 20, price: 10 });
 
   /** @const {Properties} The burger with potato. */
-  WITH_POTATO = new Properties({ energy: 10, price: 15 });
+  static WITH_POTATO = new Properties({ energy: 10, price: 15 });
 
   /** @const {Properties} The burger with salad. */
-  WITH_SALAD = new Properties({ energy: 5, price: 20 });
+  static WITH_SALAD = new Properties({ energy: 5, price: 20 });
 
   /**
    * @param {Properties} size The size of a burger, from a set.
@@ -114,13 +118,13 @@ class Burger extends Product {
     if (size instanceof Properties) {
       this._props.add(this._size = size);
     } else {
-      throw this._SIZE_FAIL_ERROR;
+      throw this.constructor._SIZE_FAIL_ERROR;
     }
 
     if (fill instanceof Properties) {
       this._props.add(this._fill = fill);
     } else {
-      throw this._FILL_FAIL_ERROR;
+      throw this.constructor._FILL_FAIL_ERROR;
     }
   }
 
@@ -138,13 +142,15 @@ class Burger extends Product {
 /** Represents a drink, such as a cup of coffee or a glass of cola. */
 class Drink extends Product {
   /** @type {Error} */
-  _TYPE_FAIL_ERROR = new Error("the drink type is not chosen or is invalid");
+  static _TYPE_FAIL_ERROR = new Error(
+    "the drink type is not chosen or is invalid"
+  );
 
   /** @const {Properties} The coffee. */
-  COFFEE = new Properties({ energy: 20, price: 80 });
+  static COFFEE = new Properties({ energy: 20, price: 80 });
 
   /** @const {Properties} The cola. */
-  COLA = new Properties({ energy: 40, price: 50 });
+  static COLA = new Properties({ energy: 40, price: 50 });
 
   /** @param {Properties} type The type of a drink, from a set. */
   constructor(type) {
@@ -153,7 +159,7 @@ class Drink extends Product {
     if (type instanceof Properties) {
       this._props.add(this._type = type);
     } else {
-      throw this._TYPE_FAIL_ERROR;
+      throw this.constructor._TYPE_FAIL_ERROR;
     }
   }
 
@@ -166,19 +172,21 @@ class Drink extends Product {
 /** Represents a salad, such as a Caesar salad or an Olivier salad. */
 class Salad extends Product {
   /** @type {Error} */
-  _TYPE_FAIL_ERROR = new Error("the salad type is not chosen or is invalid");
+  static _TYPE_FAIL_ERROR = new Error(
+    "the salad type is not chosen or is invalid"
+  );
 
   /** @type {string} */
-  _WEIGHT_LOG = "the salad weight is not chosen, assuming 100g";
+  static _WEIGHT_LOG = "the salad weight is not chosen, assuming 100g";
 
   /** @type {string} */
-  _WEIGHT_WARN = "the salad weight is invalid, assuming 100g";
+  static _WEIGHT_WARN = "the salad weight is invalid, assuming 100g";
 
   /** @const {Properties} The Caesar salad. */
-  CAESAR = new Properties({ energy: 20, price: 100 });
+  static CAESAR = new Properties({ energy: 20, price: 100 });
 
   /** @const {Properties} The Olivier salad. */
-  OLIVIER = new Properties({ energy: 80, price: 50 });
+  static OLIVIER = new Properties({ energy: 80, price: 50 });
 
   /** @type {number} */
   _weight = 100;
@@ -193,18 +201,18 @@ class Salad extends Product {
     if (type instanceof Properties) {
       this._props.add(this._type = type);
     } else {
-      throw this._TYPE_FAIL_ERROR;
+      throw this.constructor._TYPE_FAIL_ERROR;
     }
 
     switch (typeof weight) {
       case "undefined":
-        console.log(this._WEIGHT_LOG);
+        console.log(this.constructor._WEIGHT_LOG);
         break;
       case "number":
         this.weight = weight;
         break;
       default:
-        console.warn(this._WEIGHT_WARN);
+        console.warn(this.constructor._WEIGHT_WARN);
     }
   }
 
@@ -229,7 +237,7 @@ class Salad extends Product {
 /** Represents the order, containing the order. */
 class Order extends Product {
   /** @type {Error} */
-  _PAID_FOR_ERROR = new Error("the product is already paid for");
+  static _PAID_FOR_ERROR = new Error("the product is already paid for");
 
   /** @type {boolean} */
   _isPaidFor = false;
@@ -273,7 +281,7 @@ class Order extends Product {
    */
   _ensureNotPaid(call, ...args) {
     if (this._isPaidFor) {
-      throw _PAID_FOR_ERROR;
+      throw this.constructor._PAID_FOR_ERROR;
     } else {
       return call(...args);
     }
