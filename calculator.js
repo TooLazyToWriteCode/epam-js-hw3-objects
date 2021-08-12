@@ -105,8 +105,8 @@ class Burger extends Product {
   WITH_SALAD = new Properties({ energy: 5, price: 20 });
 
   /**
-   * @param {string} size The size of a burger, from a set.
-   * @param {string} fill The fillfor a burger, from a set.
+   * @param {Properties} size The size of a burger, from a set.
+   * @param {Properties} fill The fillfor a burger, from a set.
    */
   constructor(size, fill) {
     super();
@@ -146,7 +146,7 @@ class Drink extends Product {
   /** @const {Properties} The cola. */
   COLA = new Properties({ energy: 40, price: 50 });
 
-  /** @param {string} type The type of a drink, from a set. */
+  /** @param {Properties} type The type of a drink, from a set. */
   constructor(type) {
     super();
 
@@ -181,8 +181,8 @@ class Salad extends Product {
   _weight = 100;
 
   /**
-   * @param {string} type   The type of a salad, from a set.
-   * @param {number} weight The weight of a salad, in grams.
+   * @param {Properties} type   The type of a salad, from a set.
+   * @param {number}     weight The weight of a salad, in grams.
    */
   constructor(type, weight) {
     super();
