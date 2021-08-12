@@ -1,8 +1,8 @@
 /**
  * Represents properties of an order, a product, a type of a product or a
  * component of a product. It contains such settings as a price, an energy
- * value, and other. It is intended for usage by other classes, and is
- * pretty useless on itself otherwise.
+ * value, and other. It is intended to be used by other classes, and is
+ * pretty useless otherwise.
  */
 class Properties {
   /**
@@ -84,8 +84,8 @@ class Properties {
 }
 
 /**
- * Represents a single sold food product of any kind. It is intended for
- * usage by other classes, and is pretty useless on itself otherwise.
+ * Represents a single sold food product of any kind. It is intended to be
+ * used by other classes, and is pretty useless otherwise.
  */
 class Product {
   /** @const {string} The name which identifies the product. */
