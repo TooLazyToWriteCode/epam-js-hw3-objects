@@ -168,6 +168,9 @@ class Salad extends Product {
   /** @type {Error} */
   _TYPE_FAIL_ERROR = new Error("the salad type is not chosen or is invalid");
 
+  /** @type {string} */
+  _WEIGHT_WARN = "the salad weight is not chosen or is invalid, assuming 100g";
+
   /** @const {Properties} The Caesar salad. */
   CAESAR = new Properties({ energy: 20, price: 100 });
 
@@ -188,6 +191,12 @@ class Salad extends Product {
       this._props.add(this._type = type);
     } else {
       throw this._TYPE_FAIL_ERROR;
+    }
+
+    if (typeof weight === "number") {
+      this.weight = weight;
+    } else {
+      console.warn(this._WEIGHT_WARN);
     }
   }
 
