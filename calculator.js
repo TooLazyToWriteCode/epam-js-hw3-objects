@@ -465,7 +465,6 @@ class Salad extends Product {
  *   .printInfo()
  *   // Error, the order is paid for.
  *   .add(new Drink(Drink.COLA));
- *
  * ```
  */
 class Order extends Product {
