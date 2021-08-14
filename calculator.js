@@ -5,6 +5,9 @@
  * pretty useless otherwise.
  */
 class Properties {
+  /** @const {number} The precision of the floating point values. */
+  static _FLOAT_PRECISION = 8;
+
   /**
    * @param {Object} props        The list of properties.
    * @param {number} props.energy The energy value, in calories.
@@ -45,7 +48,8 @@ class Properties {
   add(props) {
     Object.keys(this).forEach((key) => {
       if (key !== "_id") {
-        this[key] += props[key];
+        this[key] = Number((this[key] + props[key])
+          .toFixed(this.constructor._FLOAT_PRECISION));
       }
     });
 
@@ -53,14 +57,15 @@ class Properties {
   }
 
   /**
-   * Deletes the given properties from the current ones.
+   * Substracts the given properties from the current ones.
    * @param  {Properties} props The properties.
    * @return {Properties} This instance (for chaining).
    */
-  delete(props) {
+  sub(props) {
     Object.keys(this).forEach((key) => {
       if (key !== "_id") {
-        this[key] -= props[key];
+        this[key] = Number((this[key] - props[key])
+          .toFixed(this.constructor._FLOAT_PRECISION));
       }
     });
 
@@ -72,10 +77,11 @@ class Properties {
    * @param  {number}     value The multiplier value.
    * @return {Properties} This instance (for chaining).
    */
-  multiply(value) {
+  mul(value) {
     Object.keys(this).forEach((key) => {
       if (key !== "_id") {
-        this[key] *= value;
+        this[key] = Number((this[key] * value)
+          .toFixed(this.constructor._FLOAT_PRECISION));
       }
     });
 
@@ -146,6 +152,11 @@ class Product {
   /** @return {Properties} The properties copy. */
   get props() {
     return this._props.copy;
+  }
+
+  /** @return {string} The type of the product, from a set. */
+  get type() {
+    return this._type instanceof Properties ? this._type.id : "product";
   }
 
   /**
@@ -262,6 +273,11 @@ class Burger extends Product {
   get size() {
     return this._size.id;
   }
+
+  /** @return {string} The type of the burger, it is just burger. */
+  get type() {
+    return "burger";
+  }
 }
 
 /**
@@ -305,11 +321,6 @@ class Drink extends Product {
     } else {
       throw this.constructor._TYPE_FAIL_ERROR;
     }
-  }
-
-  /** @return {string} The type of the drink, from a set. */
-  get type() {
-    return this._type.id;
   }
 }
 
@@ -388,11 +399,6 @@ class Salad extends Product {
     }
   }
 
-  /** @return {string} The type of the salad, from a set. */
-  get type() {
-    return this._type.id;
-  }
-
   /** @return {number} The weight of a salad, in grams. */
   get weight() {
     return this._weight;
@@ -401,7 +407,7 @@ class Salad extends Product {
   /** @param {number} weight The weight of a salad, in grams. */
   set weight(weight) {
     // Do not use _weight as a setter elsewhere!
-    this._props.multiply(weight / this._weight);
+    this._props.mul(weight / this._weight);
     this._weight = weight;
   }
 }
@@ -418,28 +424,38 @@ class Salad extends Product {
  * // but they obviously do not support chaining.
  * // E is the energy value, P is the price.
  * new Order()
- *   // Add the salad.   [+10.8E, +54.0P]
+ *   // Add the salad.                     [+10.8E,  +54.0P]
  *   .add(salad)
- *   // Add the burger.  [+30.0E, +65.0P]
+ *   // Add the burger.                    [+30.0E,  +65.0P]
  *   .add(new Burger(Burger.SMALL, Burger.WITH_POTATO))
- *   // Add the cola.    [+40.0E, +50.0P]
+ *   // Add the cola.                      [+40.0E,  +50.0P]
  *   .add(new Drink(Drink.COLA))
- *   // Add the drink.   [+20.0E, +80.0P]
+ *   // Add the drink.                     [+20.0E,  +80.0P]
  *   .add(drink)
- *   // Add the coffee.  [+20.0E, +80.0P]
+ *   // Add a big burger with cheese.      [+60.0E, +110.0P]
+ *   .add(new Burger(Burger.BIG, Burger.WITH_CHEESE))
+ *   // Add the coffee.                    [+20.0E,  +80.0P]
  *   .add(new Drink(Drink.COFFEE))
- *   // Delete the cola. [-20.0E, -80.0P]
- *   .delete(drink)
- *   // Add the salad.   [+17.2E, +86.0P]
+ *   // Delete the cola by its reference.  [-20.0E,  -80.0P]
+ *   .deleteByRef(drink)
+ *   // List the ordered products. The big burger is still here.
+ *   .printList()
+ *   // Delete the coffee by its index.    [-60.0E, -110.0P]
+ *   .deleteByIndex(4)
+ *   // List the ordered products again. The big burger is gone.
+ *   .printList()
+ *   // Add the salad.                     [+17.2E,  +86.0P]
  *   .add(new Salad(Salad.CAESAR, 86))
  *   // Outputs the energy value of 118.
  *   .printEnergy()
  *   // Outputs the price of 335.
  *   .printPrice()
- *   // Delete the salad.[-10.8E, -54.0P]
- *   .delete(salad)
+ *   // Delete the salad by its reference. [-10.8E,  -54.0P]
+ *   .deleteByRef(salad)
  *   // Pay for the order and lock it.
  *   .payFor()
+ *   // List the ordered products.
+ *   .printList()
  *   // Outputs the price of 281.
  *   .printPrice()
  *   // Outputs the energy value of 107.2.
@@ -456,6 +472,9 @@ class Order extends Product {
   /** @const {string} The name which identifies the product. */
   static _NAME = "order";
 
+  /** @const {string} The message to output when the product is not found. */
+  static _DELETE_LOG = "the product is not found, doing nothing";
+
   /**
    * @const {Error} The error to throw when trying
    * to change the order that was already paid for.
@@ -465,8 +484,8 @@ class Order extends Product {
   /** @var {boolean} Whether the order was paid for. */
   _isPaidFor = false;
 
-  /** @var {Set<Product>} All the products in the order. */
-  _prods = new Set();
+  /** @var {Product[]} All the products in the order. */
+  _prods = [];
 
   /**
    * Ensures that the order was not paid for yet.
@@ -486,21 +505,48 @@ class Order extends Product {
    */
   add(prod) {
     this._ensureNotPaid();
-    this._prods.add(prod);
     this._props.add(prod.props);
+    this._prods.push(prod);
     return this;
   }
 
   /**
-   * Deletes the product from the order.
+   * Deletes the product from the order using its index (starts at 1).
+   * You can find out the index using the logs from the `list()` method.
+   * @param  {number} index The index of the product to delete.
+   * @return {Order}  This instance (for chaining).
+   * @throws If the order is already paid for.
+   */
+  deleteByIndex(index) {
+    this._ensureNotPaid();
+
+    if (--index >= 0 && index < this._prods.length) {
+      this._props.sub(this._prods[index].props);
+      this._prods.splice(index, 1);
+    } else {
+      console.log(_DELETE_LOG);
+    }
+
+    return this;
+  }
+
+  /**
+   * Deletes the product from the order using its reference.
    * @param  {Product} prod The product to delete.
    * @return {Order}   This instance (for chaining).
    * @throws If the order is already paid for.
    */
-  delete(prod) {
+  deleteByRef(prod) {
+    const index = this._prods.indexOf(prod);
     this._ensureNotPaid();
-    this._prods.delete(prod);
-    this._props.delete(prod.props);
+
+    if (index >= 0) {
+      this._props.sub(prod.props);
+      this._prods.splice(index, 1);
+    } else {
+      console.log(_DELETE_LOG);
+    }
+
     return this;
   }
 
@@ -512,6 +558,41 @@ class Order extends Product {
   payFor() {
     this._ensureNotPaid();
     this._isPaidFor = true;
+    return this;
+  }
+
+  /**
+   * Print the list of every product found in the order.
+   * @param  {boolean} omitEnergy Whether to omit the
+   *                              energy value from the output.
+   * @param  {boolean} omitPrice  Whether to omit the
+   *                              price from the output.
+   * @return {Order}   This instance (for chaining).
+   */
+  printList(omitEnergy = false, omitPrice = false) {
+    console.log("==== Your Order: ====");
+
+    this._prods.forEach((prod, index) => {
+      let output = `[${index + 1}]: ${prod.type}`;
+
+      if (prod instanceof Burger) {
+        output += `, ${prod.size} with ${prod.filling}`;
+      } else if (prod instanceof Salad) {
+        output += `, which weighs ${prod.weight} gramms`;
+      }
+
+      if (!omitEnergy) {
+        output += ` [energy value: ${prod.energy}]`;
+      }
+
+      if (!omitPrice) {
+        output += ` [price: ${prod.price}]`;
+      }
+
+      console.log(output);
+    });
+
+    console.log("=====================");
     return this;
   }
 }
