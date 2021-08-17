@@ -413,7 +413,7 @@ class Salad extends Product {
 }
 
 /**
- * Represents the order, containing the order. Supports chaining.
+ * Represents an order as a collection of products. Supports chaining.
  * ```js
  * // A random salad.
  * const salad = new Salad(Salad.CAESAR, 54);
@@ -511,7 +511,7 @@ class Order extends Product {
 
   /**
    * Deletes the product from the order using its index (starts at 1).
-   * You can find out the index using the logs from the `list()` method.
+   * You can find out the index using the logs from the `printList()` method.
    * @param  {number} index The index of the product to delete.
    * @return {Order}  This instance (for chaining).
    * @throws If the order is already paid for.
