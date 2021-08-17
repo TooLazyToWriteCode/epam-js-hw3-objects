@@ -46,9 +46,9 @@ class Properties {
    * @return {Properties} This instance (for chaining).
    */
   add(props) {
-    Object.keys(this).forEach((key) => {
-      if (key !== "_id") {
-        this[key] = Number((this[key] + props[key])
+    Object.keys(this).forEach((propName) => {
+      if (propName !== "_id") {
+        this[propName] = Number((this[propName] + props[propName])
           .toFixed(this.constructor._FLOAT_PRECISION));
       }
     });
@@ -62,9 +62,9 @@ class Properties {
    * @return {Properties} This instance (for chaining).
    */
   sub(props) {
-    Object.keys(this).forEach((key) => {
-      if (key !== "_id") {
-        this[key] = Number((this[key] - props[key])
+    Object.keys(this).forEach((propName) => {
+      if (propName !== "_id") {
+        this[propName] = Number((this[propName] - props[propName])
           .toFixed(this.constructor._FLOAT_PRECISION));
       }
     });
@@ -78,9 +78,9 @@ class Properties {
    * @return {Properties} This instance (for chaining).
    */
   mul(value) {
-    Object.keys(this).forEach((key) => {
-      if (key !== "_id") {
-        this[key] = Number((this[key] * value)
+    Object.keys(this).forEach((propName) => {
+      if (propName !== "_id") {
+        this[propName] = Number((this[propName] * value)
           .toFixed(this.constructor._FLOAT_PRECISION));
       }
     });
@@ -276,7 +276,7 @@ class Burger extends Product {
 
   /** @return {string} The type of the burger, it is just burger. */
   get type() {
-    return "burger";
+    return this.constructor._NAME;
   }
 }
 
