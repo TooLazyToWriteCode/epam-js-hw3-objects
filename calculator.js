@@ -264,7 +264,7 @@ class Salad extends Product {
 }
 
 class Order extends Product {
-  static _DELETE_NOT_FOUND_LOG = "the product is not found, doing nothing";
+  static _DELETE_NOT_FOUND_MSG = "the product is not found, doing nothing";
 
   static NAME = "order";
 
@@ -298,7 +298,7 @@ class Order extends Product {
       this._props.subFromCurrent(this._prods[index].props);
       this._prods.splice(index, 1);
     } else {
-      console.log(_DELETE_LOG);
+      console.log(_DELETE_NOT_FOUND_MSG);
     }
 
     return this;
@@ -313,7 +313,7 @@ class Order extends Product {
       this._props.subFromCurrent(prod.props);
       this._prods.splice(index, 1);
     } else {
-      console.log(_DELETE_LOG);
+      console.log(_DELETE_NOT_FOUND_MSG);
     }
 
     return this;
